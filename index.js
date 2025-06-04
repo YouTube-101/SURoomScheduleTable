@@ -205,7 +205,7 @@ async function loop() {
         else if (new Date().getSeconds() != 0) {
             done = false;
         }
-        if (new Date().getTime() - lasttime > 3000) {
+        if (new Date().getTime() - lasttime > 2000) {
             lasttime = new Date().getTime();
             UpdateLocations();
         }
