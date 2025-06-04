@@ -1,0 +1,84 @@
+body {
+    background-color: black;
+    margin: 0px;
+}
+#header {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    background: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 79px;
+    border-bottom: 1px solid white;
+}
+* {
+    line-height: 1.2;
+}
+h3 {
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0px;
+    font-size: 25px;
+    font-weight: normal;
+
+}
+#maindiv > div {
+    display: grid;
+    grid-template-columns: 90px 90px 100px auto max-content 175px 245px;
+    gap: 10px;
+    border-bottom: 1px solid white;
+    padding: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+#maindiv > div:nth-child(1) {
+    background-color: rgb(0, 32, 149) !important;
+    position: fixed;
+    width: calc(100% - 30px);
+    top: 80px;
+
+}
+#maindiv > div:nth-child(2) {
+    margin-top: 150px;
+
+}
+#maindiv > div > h3:nth-child(4) {
+    text-align: start;
+    text-wrap: nowrap;
+    overflow: hidden;
+
+}
+#maindiv > div:nth-child(odd) {
+    background-color: #333;
+}
+#maindiv > div > h3 {
+    padding: 10px;
+
+}
+#maindiv > div > div {
+    padding: 10px;
+
+}
+#maindiv > div > div.blink {
+    padding: 5px;
+    animation: blinkborder 2s ease-in-out infinite;
+    border-radius: 15px;
+}
+@keyframes blinkborder {
+    0% {
+        border: 5px solid transparent;
+        background-color: transparent;
+    }
+    50% {
+        border: 5px solid red;
+        background-color: rgb(113, 0, 0);
+    }
+    100% {
+        border: 5px solid transparent;
+        background-color: transparent;
+    }
+}
