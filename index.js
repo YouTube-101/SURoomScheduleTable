@@ -68,8 +68,10 @@ function InsertRow(start, length, code, type, text, owner, location) {
     const remarkstext = document.createElement("h3");
     time = new Date(start * 60000);
     stime.innerText = (time.getUTCHours() + 3).toString().padStart(2, '0') + ":" + time.getUTCMinutes().toString().padStart(2, '0');
+    if (stime.innerText.substring(0, 2) == "24") stime.innerText = "00" + stime.innerText.substring(2);
     end = new Date((start + length) * 60000);
     etime.innerText = (end.getUTCHours() + 3).toString().padStart(2, '0') + ":" + end.getUTCMinutes().toString().padStart(2, '0');
+    if (etime.innerText.substring(0, 2) == "24") etime.innerText = "00" + etime.innerText.substring(2);
     codetext.innerText = code;
     textfield.innerText = text;
     ownertext.innerText = owner;
