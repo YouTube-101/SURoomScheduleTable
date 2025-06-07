@@ -1,10 +1,11 @@
 const fs = require("fs");
 const fetch = require("node-fetch");
 
-async function ParseSchedule(schedule) {
+async function ParseSchedule(schedule, start, finish, building) {
     schedule = schedule.substring(schedule.indexOf('<tr class="main-row">'));
     let rooms = schedule.split('<tr class="main-row">');
     rooms.shift();
+
     rooms = rooms.map(room => {
         room = room.substring(27);
         const roomcode = room.substring(0, room.indexOf("</h3>"));
@@ -16,61 +17,72 @@ async function ParseSchedule(schedule) {
         const capacity = parseInt(room.substring(0, room.indexOf("</i>")).trim());
         room = room.substring(room.indexOf("</p>")+ 68);
         room = room.substring(room.indexOf("</th>") + 10);
-        room = room.substring(room.indexOf("</td>") + 88);
-        room = room.substring(0, room.length - 25);
-        room = room.split("\n");
-        room.pop();
-        room = room.map(event => {
-            return event.substring(event.indexOf("href=") + 39, event.indexOf('">'));
-        });
-        const url = (room.length == 0)? null : "https://suis.sabanciuniv.edu/prod/sabanci_rooms.p_response_2_2_new?"+ room[0].substring(0, room[0].indexOf('&s_time'));
-        room = room.map(event => {
-            return event.substring(event.indexOf("&s_time=") + 8)
-        })
+        room = room.substring(0, room.length - 18);
+        let eventexists = false;
+        while (room.includes("</td>")) {
+            room = room.substring(room.indexOf(';">')+ 3);
+            room = room.substring(room.indexOf('<div style="position:relative;">') + 33);
+            if (room.startsWith("<a ")) {
+                eventexists = true;
+                room = room.substring(room.indexOf("<tr>"));
+            }
+            room = room.substring(4);
+        }
         return {
             room: {
-                code: roomcode,
-                name: roomname,
+                code: roomcode.trim(),
+                name: roomname.trim(),
                 type: roomtype,
-                capacity: capacity,
+                capacity: capacity
             },
-            eventurl: url,
-            events: room,
+            eventexists: eventexists,
         }
     });
     for (let i = 0; i < rooms.length; i++) {
-        if (rooms[i].eventurl != null) {
+        if (rooms[i].eventexists) {
             console.log("Fetching events for " + rooms[i].room.code + "...");
-            let html = await fetch(rooms[i].eventurl).then(async res => await res.text());
-            const date = rooms[i].eventurl.substring(rooms[i].eventurl.indexOf("s_date=") + 7, rooms[i].eventurl.indexOf("&e_date=")).split("/");
-            delete rooms[i].eventurl;
+            let html = await fetch("https://suis.sabanciuniv.edu/prod/sabanci_rooms.p_response_2_2_new?s_date="+start+"&e_date="+finish+"&b_code="+building+"&r_code="+rooms[i].room.code).then(async res => await res.text());
             html = html.substring(html.indexOf('<h4>Schedule Detail</h4>') + 26);
             html = html.substring(html.indexOf('<td><b>DETAIL</b></td>') + 30);
-            html = html.substring(html.indexOf('</tr>') + 5);
-            html = html.substring(0, html.indexOf('</table>'));
+            html = html.substring(html.indexOf('</tr>') + 11);
+            html = html.substring(0, html.lastIndexOf('</table>'));
+            html = html.substring(0, html.lastIndexOf('</table>'));
+            html = html.replaceAll("<td>","").replaceAll("</td>","").replaceAll("</tr>","");
             html = html.split("<tr>\n");
-            html.shift();
             html = html.map(event => {
-                event = event.substring(event.indexOf("</td>") + 5);
-                event = event.substring(event.indexOf("</td>") + 10);
-                const start = event.substring(0, event.indexOf("</td>")).trim().split(":");
-                event = event.substring(event.indexOf("</td>") + 10);
-                const end = event.substring(0, event.indexOf("</td>")).trim().split(":");
-                event = event.substring(event.indexOf("</td>") + 10);
-                event = event.substring(event.indexOf("</td>") + 10);
-                event = event.substring(event.indexOf("href='") + 6);
-                const url = "https://suis.sabanciuniv.edu/prod/" + event.substring(0, event.indexOf("'"));
-                const startTS = new Date(parseInt("20"+date[2]), parseInt(date[1] - 1), parseInt(date[0]), parseInt(start[0]), parseInt(start[1]));
-                const endTS = new Date(parseInt("20"+date[2]), parseInt(date[1] - 1), parseInt(date[0]), parseInt(end[0]), parseInt(end[1]));
-                const length = endTS.getTime() - startTS.getTime();
+                event = event.trim();
+                event = event.split("\n");
+                let startremoval = 0;
+                let endremoval = 0;
+                for (let j = 0; j < event.length; j++) {
+                    if (event[j] == "" && startremoval == 0) {
+                        startremoval = j;
+                    }
+                    else if (event[j] == "" && startremoval != 0) {
+                        endremoval = j;
+                        break;
+                    }
+                }
+                event = event.slice(0, startremoval).concat(event.slice(endremoval + 1));
+                let date = event[0].trim().split("/");
+                let time = event[2].trim().split(":");
+                const start = new Date(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(time[0]),parseInt(time[1])).getTime() / 60000;
+                date = event[1].trim().split("/");
+                time = event[3].trim().split(":");
+                const end = new Date(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(time[0]),parseInt(time[1])).getTime() / 60000;
+                const length = end - start;
                 return {
-                    time: startTS.getTime() / 60000,
-                    length: length / 60000,
-                    url: url,
+                    time: start,
+                    length: length,
+                    url: "https://suis.sabanciuniv.edu/prod/" + event[4].substring(event[4].indexOf("href='") + 6, event[4].lastIndexOf("'")),
                 };
             });
             rooms[i].events = html;
         }
+        else {
+            rooms[i].events = [];
+        }
+        delete rooms[i].eventexists;
     }
     for (let i = 0; i < rooms.length; i++) {
         for (let j = 0; j < rooms[i].events.length; j++) {
@@ -87,7 +99,7 @@ async function ParseSchedule(schedule) {
             while (html.includes("  ")) {
                 html = html.replaceAll("  ", " ");
             }
-            html = html.replaceAll("</tr> <tr>","</tr><tr>").split("</tr><tr>").map(event => {
+            html = html.replaceAll(' <table class="table table-bordered">',"").replaceAll("</tr> <tr>","</tr><tr>").split("</tr><tr>").map(event => {
                 event = event.trim();
                 let data = event.substring(19).substring(0, event.length - 5).trim().replaceAll("</b> </td>", "</b></td>").split("</b></td>");
                 if (data[0] == "") {
@@ -132,10 +144,9 @@ async function ParseSchedule(schedule) {
                 briefing.text = json.course.code + " - " + json.course.name;
                 briefing.owner = json.course.instructors[0];
             }
-            else if (json.CRN) { //FIX THIS BUG
-                console.log(json);
+            else if (json.CRN) {
                 delete json.CRN;
-                briefing.text = "Unknown Event";
+                briefing.text = json.Event;
                 json.type = "EVENT";
                 briefing.type = "EVENT";
                 briefing.owner = "";
@@ -144,7 +155,7 @@ async function ParseSchedule(schedule) {
                 json.owner = json.Name;
                 delete json.Name;
                 json.type = "EVENT";
-                json.name = json["Event No / Name"].substring(8).trim().replaceAll("�", "ü").replaceAll("?", "ı");
+                json.name = json["Event No / Name"].substring(8).trim()
                 delete json["Event No / Name"];
                 if (json.name == "ADP Akran Oturumları") json.type = "ASP";
                 else if (json.name.toLowerCase().includes("make up") || json.name.toLowerCase().includes("exam") || json.name.toLowerCase().includes("makeup") || json.name.toLowerCase().includes("midterm") || json.name.toLowerCase().includes("final")) json.type = "EXAM";
@@ -162,39 +173,33 @@ async function ParseSchedule(schedule) {
     });
     return roomsobj;
 }
-async function GetSchedule(day, month, year, building) {
+async function GetSchedule(day, month, year, eday, emonth, eyear, building) {
     return await fetch("https://suis.sabanciuniv.edu/prod/sabanci_rooms.p_get_all_schedule",
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
             },
-            body: "s_date=" + day + "%2F" + month + "%2F" + year + "&e_date=" + day + "%2F" + month + "%2F" + year + "&buildings=" + building
+            body: "s_date=" + day + "%2F" + month + "%2F" + year + "&e_date=" + eday + "%2F" + emonth + "%2F" + eyear + "&buildings=" + building
         }
-    ).then(async res => await ParseSchedule(await res.text()));
+    ).then(async res => await ParseSchedule(await res.text(), day + "/" + month + "/" + year, eday + "/" + emonth + "/" + eyear, building));
 }
 async function Start() {
     console.log("Fetching schedule...");
-    const day = "04";
-    const month = "06";
-    const year = "25";
+    const start = new Date();
+    const end = new Date(start.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const day = start.getDate().toString().padStart(2, '0');
+    const month = (start.getMonth() + 1).toString().padStart(2, '0');
+    const year = start.getFullYear().toString().substring(2);
+    const eday = end.getDate().toString().padStart(2, '0');
+    const emonth = (end.getMonth() + 1).toString().padStart(2, '0');
+    const eyear = end.getFullYear().toString().substring(2);
+    console.log("Fetching schedule for " + day + "/" + month + "/" + year + " to " + eday + "/" + emonth + "/" + eyear);
     const schedule = {};
-    const buildings = ["FMAN", "FASS", "ALT", "FENS", "UC", "KCC", "SL", "SUNUM", "SUSAM"]
+    const buildings = ["FMAN", "FASS", "FENS", "ALT", "UC", "KCC", "SL", "SUNUM", "SUSAM"]
     for (const building of buildings) {
         console.log("Grabbing schedule for " + building + "...");
-        schedule[building] = await GetSchedule(day, month, year, building);
-    }
-    const nextday = {};
-    for (const building of buildings) {
-        console.log("Grabbing schedule for " + building + "...");
-        nextday[building] = await GetSchedule(((parseInt(day)+1<10)?"0":"")+(parseInt(day)+1), month, year, building);
-    }
-    for (const building of buildings) {
-        for (const room in nextday[building]) {
-            for (const event of nextday[building][room].events) {
-                schedule[building][room].events.push(event);
-            }
-        }
+        schedule[building] = await GetSchedule(day, month, year, eday, emonth, eyear, building);
     }
     fs.writeFileSync("schedule.json", JSON.stringify(schedule, null, 2));
     console.log("Schedule saved to schedule.json");
