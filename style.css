@@ -31,13 +31,29 @@ h3 {
 }
 #maindiv > div {
     display: grid;
-    grid-template-columns: 90px 90px 100px auto max-content 175px 245px;
+    grid-template-columns: 180px 100px auto max-content 175px 270px;
     gap: 10px;
     border-bottom: 1px solid white;
     padding: 15px;
     padding-top: 10px;
     padding-bottom: 10px;
 
+}
+#maindiv > div > div:nth-child(1) {
+    display: grid;
+    grid-template-columns: auto max-content;
+    justify-content: center;
+    width: 160px;
+    gap: 10px;
+}
+#maindiv > div > div:nth-child(1) > h3{
+    width: 75px;
+}
+#maindiv > div > div:nth-child(1).showdate > h3:nth-child(1) {
+    width: 160px;
+}
+#maindiv > div > div:nth-child(1).showdate > h3:nth-child(2) {
+    display: none;
 }
 #maindiv > div:nth-child(1) {
     background-color: rgb(0, 32, 149) !important;
@@ -50,7 +66,7 @@ h3 {
     margin-top: 150px;
 
 }
-#maindiv > div > h3:nth-child(4) {
+#maindiv > div > h3:nth-child(3) {
     text-align: start;
     text-wrap: nowrap;
     overflow: hidden;

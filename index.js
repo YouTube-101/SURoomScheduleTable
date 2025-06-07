@@ -2,15 +2,18 @@ let data = {};
 let events = [];
 let language = "en";
 let nowts = 0;
+let beta = true;
 async function getFile() {
-    ts = await fetch("https://ytube101.com/roomschedulets");
-    ts = parseInt(await ts.text());
-    if (nowts == ts) return;
-    for (let i = 1; i < document.getElementById("maindiv").children.length; i++) {
-        document.getElementById("maindiv").children[i].remove();
+    if (!beta) {
+        ts = await fetch("https://ytube101.com/roomschedulets");
+        ts = parseInt(await ts.text());
+        if (nowts == ts) return;
+        for (let i = 1; i < document.getElementById("maindiv").children.length; i++) {
+            document.getElementById("maindiv").children[i].remove();
+        }
+        nowts = ts;
     }
-    nowts = ts;
-    data = await fetch("https://ytube101.com/roomscheduledata.json");
+    let data = await fetch(beta?"/schedule.json":"https://ytube101.com/roomscheduledata.json");
     data = await data.json();
     let rooms = [];
     for (let b = 0; b < Object.keys(data).length; b++) {
@@ -58,6 +61,7 @@ async function getFile() {
 }
 function InsertRow(start, length, code, type, text, owner, location) {
     const row = document.createElement("div");
+    const dtime = document.createElement("div");
     const stime = document.createElement("h3");
     const etime = document.createElement("h3");
     const codetext = document.createElement("h3");
@@ -78,8 +82,9 @@ function InsertRow(start, length, code, type, text, owner, location) {
     roomcode.innerText = location[0];
     remarks.appendChild(remarkstext);
     remarks.appendChild(remarkstext);
-    row.appendChild(stime);
-    row.appendChild(etime);
+    dtime.appendChild(stime);
+    dtime.appendChild(etime);
+    row.appendChild(dtime);
     row.appendChild(codetext);
     textfield.style.color = { "COURSE": "rgb(255, 247, 89)", "EXAM": "rgb(255, 89, 89)", "ASP": "rgb(89, 89, 255)", "EVENT": "white", "DUPE": "purple" }[type];
     row.appendChild(textfield);
@@ -147,12 +152,39 @@ function UpdateRemark(index, start, length) {
         events.splice(index - 1, 1);
         return true;
     }
-    document.getElementById("maindiv").children[index].children[6].children[0].innerText = text;
-    document.getElementById("maindiv").children[index].children[6].children[0].style.color = color;
-    document.getElementById("maindiv").children[index].children[6].classList.toggle("blink", blinking);
+    document.getElementById("maindiv").children[index].children[5].children[0].innerText = text;
+    document.getElementById("maindiv").children[index].children[5].children[0].style.color = color;
+    document.getElementById("maindiv").children[index].children[5].classList.toggle("blink", blinking);
     return false;
 }
-function UpdateLocation(index, justlang = false) {
+function getOrdinal(n) {
+    if (n > 3 && n < 21) return "th";
+    switch (n % 10) {
+        case 1: return "st";
+        case 2: return "nd";
+        case 3: return "rd";
+        default: return "th";
+    }
+}
+function UpdateLocation(index, justlang = false, showingdate = false) {
+    const rightnow = new Date();
+    const eventtime = new Date(events[index - 1].time * 60000);
+    const time = eventtime.getHours().toString().padStart(2, '0') + ":" + eventtime.getMinutes().toString().padStart(2, '0');
+    rightnow.setHours(0, 0, 0, 0);
+    eventtime.setHours(0, 0, 0, 0);
+    const diff = (eventtime.getTime() - rightnow.getTime()) / (1000 * 60 * 60 * 24);
+    const showday = (diff < 6 && diff != 0);
+    const eventday = (language == "tr")?(["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"][eventtime.getDay()]):(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"][eventtime.getDay()]);
+    if (!showingdate) {
+        document.getElementById("maindiv").children[index].children[0].children[0].innerText = time;
+        document.getElementById("maindiv").children[index].children[0].classList.remove("showdate");
+    }
+    else if (diff != 0) {
+        if (diff == 1) document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr")?"Yarın": "Tomorrow";
+        else if (showday) document.getElementById("maindiv").children[index].children[0].children[0].innerText = eventday;
+        else document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr")?(eventtime.getDate().toString() + " " + ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][eventtime.getMonth()]):(["January","February","March","April","May","June","July","August","September","October","November","December"][eventtime.getMonth()] + " " + eventtime.getDate().toString() + getOrdinal(parseInt(eventtime.getDate())));
+        document.getElementById("maindiv").children[index].children[0].classList.add("showdate");
+    }
     if (!justlang) {
         if (!events[index - 1].locationindex) {
             if (events[index - 1].location.length == 1) return;
@@ -165,8 +197,7 @@ function UpdateLocation(index, justlang = false) {
         events[index - 1].locationindex = 0;
     }
     let text = events[index - 1].location[events[index - 1].locationindex];
-    if (language == "tr") text = text.replaceAll("FENS", "MDBF").replaceAll("FASS", "SSBF").replaceAll("FMAN", "YBF").replaceAll("KCC", "KİM").replaceAll("SL", "DO").replaceAll("UC", "ÜM");
-    document.getElementById("maindiv").children[index].children[5].innerText = text;
+    document.getElementById("maindiv").children[index].children[4].innerText = text;
 }
 function UpdateRemarks() {
     for (let i = 0; i < events.length; i++) {
@@ -175,20 +206,22 @@ function UpdateRemarks() {
         }
     }
 }
+let showingdate = false;
 function UpdateLocations(justlang = false) {
+    if (!justlang) showingdate = !showingdate;
     for (let i = 0; i < events.length; i++) {
-        UpdateLocation(i + 1, justlang);
+        UpdateLocation(i + 1, justlang, showingdate);
     }
 }
 function ToggleLanguage() {
     language = (language == "en") ? "tr" : "en";
-    document.getElementById("maindiv").children[0].children[0].innerText = (language == "en") ? "Time" : "Zaman";
-    document.getElementById("maindiv").children[0].children[1].innerText = (language == "en") ? "End" : "Bitiş";
-    document.getElementById("maindiv").children[0].children[2].innerText = (language == "en") ? "Code" : "Kod";
-    document.getElementById("maindiv").children[0].children[3].innerText = (language == "en") ? "Event Name" : "Etkinlik Adı";
-    document.getElementById("maindiv").children[0].children[4].innerText = (language == "en") ? "Event Owner" : "Etkinlik Sahibi";
-    document.getElementById("maindiv").children[0].children[5].innerText = (language == "en") ? "Location" : "Konum";
-    document.getElementById("maindiv").children[0].children[6].innerText = (language == "en") ? "Remarks" : "Açıklamalar";
+    document.getElementById("maindiv").children[0].children[0].children[0].innerText = (language == "en") ? "Time" : "Zaman";
+    document.getElementById("maindiv").children[0].children[0].children[1].innerText = (language == "en") ? "End" : "Bitiş";
+    document.getElementById("maindiv").children[0].children[1].innerText = (language == "en") ? "Code" : "Kod";
+    document.getElementById("maindiv").children[0].children[2].innerText = (language == "en") ? "Event Name" : "Etkinlik Adı";
+    document.getElementById("maindiv").children[0].children[3].innerText = (language == "en") ? "Event Owner" : "Etkinlik Sahibi";
+    document.getElementById("maindiv").children[0].children[4].innerText = (language == "en") ? "Location" : "Konum";
+    document.getElementById("maindiv").children[0].children[5].innerText = (language == "en") ? "Remarks" : "Açıklamalar";
     document.getElementById("header").children[0].innerText = (language == "en") ? "CAMPUS EVENTS" : "KAMPÜS ETKİNLİKLERİ";
     UpdateLocations(true);
     UpdateRemarks();
@@ -207,7 +240,7 @@ async function loop() {
         else if (new Date().getSeconds() != 0) {
             done = false;
         }
-        if (new Date().getTime() - lasttime > 2000) {
+        if (new Date().getTime() - lasttime > 3000) {
             lasttime = new Date().getTime();
             UpdateLocations();
         }
