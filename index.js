@@ -2,7 +2,7 @@ let data = {};
 let events = [];
 let language = "en";
 let nowts = 0;
-let beta = true;
+let beta = false;
 async function getFile() {
     if (!beta) {
         ts = await fetch("https://ytube101.com/roomschedulets");
