@@ -34,8 +34,11 @@ async function getFile() {
                     code: data[i].events[j].code,
                     type: data[i].events[j].brief.type,
                     text: data[i].events[j].brief.text,
-                    owner: data[i].events[j].brief.owner,
+                    owner: [data[i].events[j].brief.owner],
                     location: [data[i].room.building + " " + data[i].room.code],
+                }
+                if (type == "COURSE") {
+                    obj.owner = data[i].events[j].details.course.instructors;
                 }
                 events.push(obj);
             }
@@ -61,7 +64,7 @@ async function getFile() {
             if (window.innerWidth <= 800) scroll = 310.8*(index-1);
             else scroll = 70.8*(index-1);
         }
-        InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner, event.location);
+        InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner[0], event.location);
     });
     UpdateRemarks();
     scrollTo(0,scroll);
