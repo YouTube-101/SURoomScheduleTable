@@ -51,8 +51,14 @@ async function getFile() {
             }
         }
     }
+    let query = {}
+    window.location.search.substring(1).split("&").map(k => {return k.split("=")}).forEach(idx => {query[idx[0]] = idx[1];});
+    console.log(query);
     events.sort((a, b) => (a.time + a.length) - (b.time + b.length));
-    events.forEach(event => {
+    events.forEach((event,index) => {
+        if (query.event && query.event == event.code) {
+            scrollTo(0,70.8*index);
+        }
         InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner, event.location);
     });
     UpdateRemarks();
