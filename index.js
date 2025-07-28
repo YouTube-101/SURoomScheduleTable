@@ -204,11 +204,23 @@ function UpdateLocation(index, justlang = false, showingdate = false) {
         }
         else if (events[index - 1].locationindex >= (events[index - 1].location.length) - 1) events[index - 1].locationindex = 0;
         else events[index - 1].locationindex++;
+        if (!events[index - 1].ownerindex) {
+            if (events[index - 1].owner.length == 1) return;
+            else events[index - 1].ownerindex = 1;
+        }
+        else if (events[index - 1].ownerindex >= (events[index - 1].owner.length) - 1) events[index - 1].ownerindex = 0;
+        else events[index - 1].ownerindex++;
     }
-    else if (events[index - 1].locationindex == undefined) {
-        events[index - 1].locationindex = 0;
+    else {
+        if (events[index - 1].locationindex == undefined) {
+            events[index - 1].locationindex = 0;
+        }
+        if (events[index - 1].ownerindex == undefined) {
+            events[index - 1].ownerindex = 0;
+        }
     }
     let text = events[index - 1].location[events[index - 1].locationindex];
+    document.getElementById("maindiv").children[index].children[3].innerText = events[index - 1].owner[events[index - 1].ownerindex];
     document.getElementById("maindiv").children[index].children[4].innerText = text;
 }
 function UpdateRemarks() {
