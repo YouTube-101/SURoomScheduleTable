@@ -81,7 +81,7 @@ h3 {
 }
 #maindiv > div > div {
     padding: 10px;
-
+    height: 30px;
 }
 #maindiv > div > div.blink {
     padding: 5px;
@@ -100,5 +100,22 @@ h3 {
     100% {
         border: 5px solid transparent;
         background-color: transparent;
+    }
+}
+@media only screen and (max-width: 800px) {
+    #maindiv > div {
+        grid-template-columns: auto auto;
+    }
+    #maindiv > div > h3:nth-child(3) {
+        text-align: center;
+    }
+    #maindiv > div > h3:nth-child(3), #maindiv > div > h3:nth-child(4), #maindiv > div > h3:nth-child(5), #maindiv > div > *:nth-child(6) {
+        grid-column: span 2;
+    }
+    #maindiv > div:first-child {
+        display: none;
+    }
+    #maindiv > div:nth-child(2) {
+        margin-top: 80px;
     }
 }
