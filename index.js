@@ -58,7 +58,7 @@ async function getFile() {
     let scroll = 0;
     events.forEach((event,index) => {
         if (query.event && query.event == event.code && scroll == 0) {
-            if (window.innerWidth <= 800) scroll = 280.8*(index-1);
+            if (window.innerWidth <= 800) scroll = 310.8*(index-1);
             else scroll = 70.8*(index-1);
         }
         InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner, event.location);
