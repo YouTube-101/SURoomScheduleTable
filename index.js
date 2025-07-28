@@ -37,7 +37,7 @@ async function getFile() {
                     owner: [data[i].events[j].brief.owner],
                     location: [data[i].room.building + " " + data[i].room.code],
                 }
-                if (type == "COURSE") {
+                if (obj.type == "COURSE") {
                     obj.owner = data[i].events[j].details.course.instructors;
                 }
                 events.push(obj);
