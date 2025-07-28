@@ -57,7 +57,7 @@ async function getFile() {
     events.sort((a, b) => (a.time + a.length) - (b.time + b.length));
     let scroll = 0;
     events.forEach((event,index) => {
-        if (query.event && query.event == event.code) {
+        if (query.event && query.event == event.code && scroll == 0) {
             scroll = 70.8*(index-1);
         }
         InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner, event.location);
