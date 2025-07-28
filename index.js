@@ -272,11 +272,11 @@ async function loop() {
             lastlangtime = new Date().getTime();
             ToggleLanguage();
         }
-        if (new Date().getMinutes() % 5 == 0 && !reloaded) {
+        if (new Date().getMinutes() == 0 && new Date().getMinutes() == 15 && !reloaded) {
             getFile();
             reloaded = true;
         }
-        else if (new Date().getMinutes() % 5 != 0) {
+        else if (new Date().getMinutes() == 0 && new Date().getMinutes() == 15) {
             reloaded = false;
         }
     }
