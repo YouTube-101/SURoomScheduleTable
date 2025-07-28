@@ -43,14 +43,14 @@ h3 {
     display: grid;
     grid-template-columns: auto max-content;
     justify-content: center;
-    width: 160px;
+    width: 190px;
     gap: 10px;
 }
 #maindiv > div > div:nth-child(1) > h3{
     width: 75px;
 }
 #maindiv > div > div:nth-child(1).showdate > h3:nth-child(1) {
-    width: 160px;
+    width: 190px;
 }
 #maindiv > div > div:nth-child(1).showdate > h3:nth-child(2) {
     display: none;
