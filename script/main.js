@@ -1,11 +1,10 @@
 const fs = require("fs");
 const fetch = require("node-fetch");
-
+const startTime = new Date().getTime();
 async function ParseSchedule(schedule, start, finish, building) {
     schedule = schedule.substring(schedule.indexOf('<tr class="main-row">'));
     let rooms = schedule.split('<tr class="main-row">');
     rooms.shift();
-
     rooms = rooms.map(room => {
         room = room.substring(27);
         const roomcode = room.substring(0, room.indexOf("</h3>"));
@@ -13,14 +12,14 @@ async function ParseSchedule(schedule, start, finish, building) {
         const roomname = room.substring(0, room.indexOf("</p>"));
         room = room.substring(roomname.length + 19);
         const roomtype = room.substring(0, room.indexOf("</p>")).trim();
-        room = room.substring(room.indexOf("<p>")+ 19);
+        room = room.substring(room.indexOf("<p>") + 19);
         const capacity = parseInt(room.substring(0, room.indexOf("</i>")).trim());
-        room = room.substring(room.indexOf("</p>")+ 68);
+        room = room.substring(room.indexOf("</p>") + 68);
         room = room.substring(room.indexOf("</th>") + 10);
         room = room.substring(0, room.length - 18);
         let eventexists = false;
         while (room.includes("</td>")) {
-            room = room.substring(room.indexOf(';">')+ 3);
+            room = room.substring(room.indexOf(';">') + 3);
             room = room.substring(room.indexOf('<div style="position:relative;">') + 33);
             if (room.startsWith("<a ")) {
                 eventexists = true;
@@ -41,40 +40,38 @@ async function ParseSchedule(schedule, start, finish, building) {
     for (let i = 0; i < rooms.length; i++) {
         if (rooms[i].eventexists) {
             console.log("Fetching events for " + rooms[i].room.code + "...");
-            let html = await fetch("https://suis.sabanciuniv.edu/prod/sabanci_rooms.p_response_2_2_new?s_date="+start+"&e_date="+finish+"&b_code="+building+"&r_code="+rooms[i].room.code).then(async res => await res.text());
+            //console.log("https://suis.sabanciuniv.edu/prod/sabanci_rooms.p_response_2_2_new?s_date=" + start + "&e_date=" + finish + "&b_code=" + building + "&r_code=" + rooms[i].room.code);
+            let html = await fetch("https://suis.sabanciuniv.edu/prod/sabanci_rooms.p_response_2_2_new?s_date=" + start + "&e_date=" + finish + "&b_code=" + building + "&r_code=" + rooms[i].room.code).then(async res => await res.text());
             html = html.substring(html.indexOf('<h4>Schedule Detail</h4>') + 26);
             html = html.substring(html.indexOf('<td><b>DETAIL</b></td>') + 30);
             html = html.substring(html.indexOf('</tr>') + 11);
             html = html.substring(0, html.lastIndexOf('</table>'));
             html = html.substring(0, html.lastIndexOf('</table>'));
-            html = html.replaceAll("<td>","").replaceAll("</td>","").replaceAll("</tr>","");
+            html = html.replaceAll("<td>", "").replaceAll("</td>", "").replaceAll("</tr>", "");
             html = html.split("<tr>\n");
             html = html.map(event => {
                 event = event.trim();
                 event = event.split("\n");
-                let startremoval = 0;
-                let endremoval = 0;
-                for (let j = 0; j < event.length; j++) {
-                    if (event[j] == "" && startremoval == 0) {
-                        startremoval = j;
-                    }
-                    else if (event[j] == "" && startremoval != 0) {
-                        endremoval = j;
-                        break;
-                    }
-                }
-                event = event.slice(0, startremoval).concat(event.slice(endremoval + 1));
                 let date = event[0].trim().split("/");
                 let time = event[2].trim().split(":");
-                const start = new Date(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(time[0]),parseInt(time[1])).getTime() / 60000;
+                const start = new Date(parseInt(date[2]), parseInt(date[1]) - 1, parseInt(date[0]), parseInt(time[0]), parseInt(time[1])).getTime() / 60000;
                 date = event[1].trim().split("/");
                 time = event[3].trim().split(":");
-                const end = new Date(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(time[0]),parseInt(time[1])).getTime() / 60000;
+                const end = new Date(parseInt(date[2]), parseInt(date[1]) - 1, parseInt(date[0]), parseInt(time[0]), parseInt(time[1])).getTime() / 60000;
                 const length = end - start;
+                let days = [];
+                let j = 5;
+                while (event[j] != "" && [" Monday ", " Tuesday ", " Wednesday ", " Thursday ", " Friday ", " Saturday ", " Sunday "].includes(event[j])) {
+                    const day = { "monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5, "saturday": 6, "sunday": 0 }[event[j].trim().toLowerCase()];
+                    days.push(day);
+                    j++;
+                }
+                j++;
                 return {
                     time: start,
-                    length: length,
-                    url: "https://suis.sabanciuniv.edu/prod/" + event[4].substring(event[4].indexOf("href='") + 6, event[4].lastIndexOf("'")),
+                    end: end,
+                    days: days,
+                    url: "https://suis.sabanciuniv.edu/prod/" + event[j].substring(event[j].indexOf("href='") + 6, event[j].lastIndexOf("'")),
                 };
             });
             rooms[i].events = html;
@@ -91,18 +88,18 @@ async function ParseSchedule(schedule, start, finish, building) {
             rooms[i].events[j].code = rooms[i].events[j].url.substring(rooms[i].events[j].url.length - 5);
             delete rooms[i].events[j].url;
             html = html.substring(html.indexOf('<h4>Detailed Information</h4>') + 30);
-            html = html.substring(0,html.lastIndexOf("</table>"));
-            html = html.substring(0,html.lastIndexOf("</table>")-7);
+            html = html.substring(0, html.lastIndexOf("</table>"));
+            html = html.substring(0, html.lastIndexOf("</table>") - 7);
             let lasttext = "null";
             let repeatcount = 1;
             html = html.substring(html.indexOf("<tr>") + 4).trim().replaceAll("\n", "").replaceAll("&nbsp;", "");
             while (html.includes("  ")) {
                 html = html.replaceAll("  ", " ");
             }
-            html = html.replaceAll(' <table class="table table-bordered">',"").replaceAll("</tr> <tr>","</tr><tr>").split("</tr><tr>").map(event => {
+            html = html.replaceAll(' <table class="table table-bordered">', "").replaceAll("</tr> <tr>", "</tr><tr>").split("</tr><tr>").map(event => {
                 event = event.trim();
                 let data = event.substring(19).substring(0, event.length - 5).trim().replaceAll("</b> </td>", "</b></td>").split("</b></td>");
-                if (data[0] == "") {
+                if (data[0] == "") {
                     data[0] = lasttext + repeatcount;
                     repeatcount++;
                 }
@@ -110,8 +107,8 @@ async function ParseSchedule(schedule, start, finish, building) {
                     lasttext = data[0].trim();
                     repeatcount = 2;
                 }
-                data[1] = data[1].substring(0,data[1].indexOf("</td>")).trim();
-                data[1] = data[1].substring(data[1].indexOf(">")+1).trim();
+                data[1] = data[1].substring(0, data[1].indexOf("</td>")).trim();
+                data[1] = data[1].substring(data[1].indexOf(">") + 1).trim();
                 return data;
             });
             let json = {};
@@ -133,11 +130,11 @@ async function ParseSchedule(schedule, start, finish, building) {
                 }
                 delete json["Course Code"];
                 delete json["Course Title"];
-                if (json["Instructor(s)"]) json.course.instructors.push(json["Instructor(s)"]);
+                if (json["Instructor(s)"]) json.course.instructors.push(json["Instructor(s)"].replaceAll("<i>( Primary )</i>", "").trim());
                 delete json["Instructor(s)"];
                 let cout = 2;
                 while (json["Instructor(s)" + cout]) {
-                    json.course.instructors.push(json["Instructor(s)" + cout]);
+                    json.course.instructors.push(json["Instructor(s)" + cout].replaceAll("<i>( Primary )</i>", "").trim());
                     delete json["Instructor(s)" + cout];
                     cout++;
                 }
@@ -158,7 +155,7 @@ async function ParseSchedule(schedule, start, finish, building) {
                 json.name = json["Event No / Name"].substring(8).trim()
                 delete json["Event No / Name"];
                 if (json.name == "ADP Akran Oturumları") json.type = "ASP";
-                else if (json.name.toLowerCase().includes("make up") || json.name.toLowerCase().includes("exam") || json.name.toLowerCase().includes("makeup") || json.name.toLowerCase().includes("midterm") || json.name.toLowerCase().includes("final")) json.type = "EXAM";
+                else if (json.name.toLowerCase().includes("make up") || json.name.toLowerCase().includes("exam") || json.name.toLowerCase().includes("makeup") || json.name.toLowerCase().includes("midterm") || json.name.toLowerCase().includes("final")) json.type = "EXAM";
                 briefing.text = json.name;
                 briefing.owner = json.owner;
             }
@@ -166,6 +163,29 @@ async function ParseSchedule(schedule, start, finish, building) {
             rooms[i].events[j].details = json;
             rooms[i].events[j].brief = briefing;
         }
+        let newevents = [];
+        rooms[i].events.forEach(event => {
+            const starttime = new Date(event.time * 60000);
+            const endtime = new Date(event.end * 60000);
+            let cursor = starttime;
+            while (cursor.getTime() < endtime.getTime()) {
+                if (event.days.includes(cursor.getDay())) {
+                    let cursorend = new Date(cursor);
+                    cursor.setHours(starttime.getHours());
+                    cursor.setMinutes(starttime.getMinutes());
+                    cursorend.setHours(endtime.getHours());
+                    cursorend.setMinutes(endtime.getMinutes());
+                    let newevent = JSON.parse(JSON.stringify(event));
+                    newevent.time = cursor.getTime() / 60000;
+                    newevent.length = (cursorend.getTime() - cursor.getTime()) / 60000;
+                    delete newevent.days;
+                    delete newevent.end;
+                    newevents.push(newevent);
+                }
+                cursor.setTime(cursor.getTime() + 24 * 60 * 60 * 1000);
+            }
+        });
+        rooms[i].events = newevents;
     }
     let roomsobj = {};
     rooms.forEach(room => {
@@ -201,7 +221,9 @@ async function Start() {
         console.log("Grabbing schedule for " + building + "...");
         schedule[building] = await GetSchedule(day, month, year, eday, emonth, eyear, building);
     }
-    fs.writeFileSync("schedule.json", JSON.stringify(schedule, null, 2));
+    fs.writeFileSync("./Backend/www/schedule.json", JSON.stringify(schedule, null, 2));
     console.log("Schedule saved to schedule.json");
+    const endTime = new Date().getTime();
+    console.log("Time taken: " + (endTime - startTime) + "ms");
 }
 Start();
