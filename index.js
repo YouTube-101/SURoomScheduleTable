@@ -50,7 +50,7 @@ async function getFile() {
     }
     for (let i = 0; i < events.length; i++) {
         for (let j = i + 1; j < events.length; j++) {
-            if ((events[i].text == events[j].text) && (events[i].time == events[j].time) && (events[i].length == events[j].length)) {
+            if ((events[i].text == events[j].text) && (events[i].time == events[j].time) && (events[i].length == events[j].length) && (events[i].code == events[j].code)) {
                 events[i].location.push(events[j].location[0]);
                 events[j].type = "DUPE";
                 events.splice(j, 1);
