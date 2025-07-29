@@ -110,6 +110,12 @@ function InsertRow(start, length, code, type, text, owner, location, index) {
     if (index > 3000) row.classList.add("above3000");
     if (index > 4000) row.classList.add("above4000");
     if (index > 5000) row.classList.add("above5000");
+    if (index > 5000) row.classList.add("above6000");
+    if (index > 5000) row.classList.add("above7000");
+    if (index > 5000) row.classList.add("above8000");
+    if (index > 5000) row.classList.add("above9000");
+    if (index > 5000) row.classList.add("above10000");
+    if (index > 5000) row.classList.add("above15000");
     document.getElementById("maindiv").appendChild(row);
 }
 function UpdateRemark(index, start, length) {
