@@ -13,7 +13,7 @@ async function getFile() {
         }
         nowts = ts;
     }
-    let data = await fetch(beta?"/schedule.json":"https://ytube101.com/roomscheduledata.json");
+    let data = await fetch(beta ? "/schedule.json" : "https://ytube101.com/roomscheduledata.json");
     data = await data.json();
     let rooms = [];
     for (let b = 0; b < Object.keys(data).length; b++) {
@@ -55,19 +55,19 @@ async function getFile() {
         }
     }
     let query = {}
-    window.location.search.substring(1).split("&").map(k => {return k.split("=")}).forEach(idx => {query[idx[0]] = idx[1];});
+    window.location.search.substring(1).split("&").map(k => { return k.split("=") }).forEach(idx => { query[idx[0]] = idx[1]; });
     console.log(query);
     events.sort((a, b) => (a.time + a.length) - (b.time + b.length));
     let scroll = 0;
-    events.forEach((event,index) => {
+    events.forEach((event, index) => {
         if (query.event && query.event == event.code && scroll == 0) {
-            if (window.innerWidth <= 800) scroll = 310.8*(index-1);
-            else scroll = 70.8*(index-1);
+            if (window.innerWidth <= 800) scroll = 310.8 * (index - 1);
+            else scroll = 70.8 * (index - 1);
         }
         InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner[0], event.location, index);
     });
     UpdateRemarks();
-    scrollTo(0,scroll);
+    scrollTo(0, scroll);
     console.log(data);
     console.log(events);
 }
@@ -214,15 +214,15 @@ function UpdateLocation(index, justlang = false, showingdate = false) {
     eventtime.setHours(0, 0, 0, 0);
     const diff = (eventtime.getTime() - rightnow.getTime()) / (1000 * 60 * 60 * 24);
     const showday = (diff < 6 && diff != 0);
-    const eventday = (language == "tr")?(["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"][eventtime.getDay()]):(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"][eventtime.getDay()]);
+    const eventday = (language == "tr") ? (["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"][eventtime.getDay()]) : (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][eventtime.getDay()]);
     if (!showingdate) {
         document.getElementById("maindiv").children[index].children[0].children[0].innerText = time;
         document.getElementById("maindiv").children[index].children[0].classList.remove("showdate");
     }
     else if (diff != 0) {
-        if (diff == 1) document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr")?"Yarın": "Tomorrow";
+        if (diff == 1) document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr") ? "Yarın" : "Tomorrow";
         else if (showday) document.getElementById("maindiv").children[index].children[0].children[0].innerText = eventday;
-        else document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr")?(eventtime.getDate().toString() + " " + ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][eventtime.getMonth()]):(["January","February","March","April","May","June","July","August","September","October","November","December"][eventtime.getMonth()] + " " + eventtime.getDate().toString() + getOrdinal(parseInt(eventtime.getDate())));
+        else document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr") ? (eventtime.getDate().toString() + " " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][eventtime.getMonth()]) : (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][eventtime.getMonth()] + " " + eventtime.getDate().toString() + getOrdinal(parseInt(eventtime.getDate())));
         document.getElementById("maindiv").children[index].children[0].classList.add("showdate");
     }
     if (!justlang) {
@@ -317,34 +317,36 @@ window.addEventListener("scroll", (e) => {
             overloading = true;
             max++;
             console.log("INCREASING MAX TO " + max);
-    document.getElementById("maindiv").children[index].classList.remove("above500");
-    document.getElementById("maindiv").children[index].classList.remove("above1000");
-    document.getElementById("maindiv").children[index].classList.remove("above1500");
-    document.getElementById("maindiv").children[index].classList.remove("above2000");
-    document.getElementById("maindiv").children[index].classList.remove("above3000");
-    document.getElementById("maindiv").children[index].classList.remove("above4000");
-    document.getElementById("maindiv").children[index].classList.remove("above5000");
-    document.getElementById("maindiv").children[index].classList.remove("above6000");
-    document.getElementById("maindiv").children[index].classList.remove("above7000");
-    document.getElementById("maindiv").children[index].classList.remove("above8000");
-    document.getElementById("maindiv").children[index].classList.remove("above9000");
-    document.getElementById("maindiv").children[index].classList.remove("above10000");
-    document.getElementById("maindiv").children[index].classList.remove("above11000");
-    document.getElementById("maindiv").children[index].classList.remove("above12000");
-    if (index > 500 && max < 1) document.getElementById("maindiv").children[index].classList.add("above500");
-    if (index > 1000 && max < 2) document.getElementById("maindiv").children[index].classList.add("above1000");
-    if (index > 1500 && max < 3) document.getElementById("maindiv").children[index].classList.add("above1500");
-    if (index > 2000 && max < 4) document.getElementById("maindiv").children[index].classList.add("above2000");
-    if (index > 3000 && max < 5) document.getElementById("maindiv").children[index].classList.add("above3000");
-    if (index > 4000 && max < 6) document.getElementById("maindiv").children[index].classList.add("above4000");
-    if (index > 5000 && max < 7) document.getElementById("maindiv").children[index].classList.add("above5000");
-    if (index > 6000 && max < 8) document.getElementById("maindiv").children[index].classList.add("above6000");
-    if (index > 7000 && max < 9) document.getElementById("maindiv").children[index].classList.add("above7000");
-    if (index > 8000 && max < 10) document.getElementById("maindiv").children[index].classList.add("above8000");
-    if (index > 9000 && max < 11) document.getElementById("maindiv").children[index].classList.add("above9000");
-    if (index > 10000 && max < 12) document.getElementById("maindiv").children[index].classList.add("above10000");
-    if (index > 11000 && max < 13) document.getElementById("maindiv").children[index].classList.add("above11000");
-    if (index > 12000 && max < 14) document.getElementById("maindiv").children[index].classList.add("above12000");
+            document.getElementById("maindiv").children.forEach((child, index) => {
+                child.classList.remove("above500");
+                child.classList.remove("above1000");
+                child.classList.remove("above1500");
+                child.classList.remove("above2000");
+                child.classList.remove("above3000");
+                child.classList.remove("above4000");
+                child.classList.remove("above5000");
+                child.classList.remove("above6000");
+                child.classList.remove("above7000");
+                child.classList.remove("above8000");
+                child.classList.remove("above9000");
+                child.classList.remove("above10000");
+                child.classList.remove("above11000");
+                child.classList.remove("above12000");
+                if (index > 500 && max < 1) child.classList.add("above500");
+                if (index > 1000 && max < 2) child.classList.add("above1000");
+                if (index > 1500 && max < 3) child.classList.add("above1500");
+                if (index > 2000 && max < 4) child.classList.add("above2000");
+                if (index > 3000 && max < 5) child.classList.add("above3000");
+                if (index > 4000 && max < 6) child.classList.add("above4000");
+                if (index > 5000 && max < 7) child.classList.add("above5000");
+                if (index > 6000 && max < 8) child.classList.add("above6000");
+                if (index > 7000 && max < 9) child.classList.add("above7000");
+                if (index > 8000 && max < 10) child.classList.add("above8000");
+                if (index > 9000 && max < 11) child.classList.add("above9000");
+                if (index > 10000 && max < 12) child.classList.add("above10000");
+                if (index > 11000 && max < 13) child.classList.add("above11000");
+                if (index > 12000 && max < 14) child.classList.add("above12000");
+            });
         }
     }
     else if (overloading == true) {
