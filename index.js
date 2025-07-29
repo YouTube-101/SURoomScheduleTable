@@ -263,9 +263,8 @@ function UpdateLocation(index, justlang = false, showingdate = false) {
             events[index - 1].ownerindex = 0;
         }
     }
-    let text = events[index - 1].location[events[index - 1].locationindex];
-    document.getElementById("maindiv").children[index].children[3].innerText = events[index - 1].owner[events[index - 1].ownerindex];
-    document.getElementById("maindiv").children[index].children[4].innerText = text;
+    if (String(events[index - 1].owner[events[index - 1].ownerindex]) != "undefined") document.getElementById("maindiv").children[index].children[3].innerText = events[index - 1].owner[events[index - 1].ownerindex];
+    if (String(events[index - 1].location[events[index - 1].locationindex]) != "undefined") document.getElementById("maindiv").children[index].children[4].innerText = events[index - 1].location[events[index - 1].locationindex];
 }
 function UpdateRemarks() {
     for (let i = 0; i < events.length; i++) {
