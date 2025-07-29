@@ -245,14 +245,12 @@ function UpdateLocation(index, justlang = false, showingdate = false) {
     }
     if (!justlang) {
         if (!events[index - 1].locationindex) {
-            if (events[index - 1].location.length == 1) return;
-            else events[index - 1].locationindex = 1;
+            if (events[index - 1].location.length != 1) events[index - 1].locationindex = 1;
         }
         else if (events[index - 1].locationindex >= (events[index - 1].location.length) - 1) events[index - 1].locationindex = 0;
         else events[index - 1].locationindex++;
         if (!events[index - 1].ownerindex) {
-            if (events[index - 1].owner.length == 1) return;
-            else events[index - 1].ownerindex = 1;
+            if (events[index - 1].owner.length != 1) events[index - 1].ownerindex = 1;
         }
         else if (events[index - 1].ownerindex >= (events[index - 1].owner.length) - 1) events[index - 1].ownerindex = 0;
         else events[index - 1].ownerindex++;
