@@ -103,6 +103,7 @@ function InsertRow(start, length, code, type, text, owner, location, index) {
     row.appendChild(ownertext);
     row.appendChild(roomcode);
     row.appendChild(remarks);
+    if (index > 500 && index <= 1000) console.log(row,index);
     if (index > 500) row.classList.add("above500");
     if (index > 1000) row.classList.add("above1000");
     if (index > 1500) row.classList.add("above1500");
