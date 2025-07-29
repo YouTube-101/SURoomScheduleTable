@@ -64,14 +64,14 @@ async function getFile() {
             if (window.innerWidth <= 800) scroll = 310.8*(index-1);
             else scroll = 70.8*(index-1);
         }
-        InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner[0], event.location);
+        InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner[0], event.location, index);
     });
     UpdateRemarks();
     scrollTo(0,scroll);
     console.log(data);
     console.log(events);
 }
-function InsertRow(start, length, code, type, text, owner, location) {
+function InsertRow(start, length, code, type, text, owner, location, index) {
     const row = document.createElement("div");
     const dtime = document.createElement("div");
     const stime = document.createElement("h3");
@@ -103,6 +103,13 @@ function InsertRow(start, length, code, type, text, owner, location) {
     row.appendChild(ownertext);
     row.appendChild(roomcode);
     row.appendChild(remarks);
+    if (index > 500) row.classList.add("500");
+    if (index > 1000) row.classList.add("1000");
+    if (index > 1500) row.classList.add("1500");
+    if (index > 2000) row.classList.add("2000");
+    if (index > 3000) row.classList.add("3000");
+    if (index > 4000) row.classList.add("4000");
+    if (index > 5000) row.classList.add("5000");
     document.getElementById("maindiv").appendChild(row);
 }
 function UpdateRemark(index, start, length) {
