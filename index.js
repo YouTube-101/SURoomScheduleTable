@@ -84,7 +84,7 @@ async function getFile() {
         }
         InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner[0], event.location, index);
     });
-    UpdateRemarks();
+    await UpdateRemarks();
     scrollTo(0, scroll);
     console.log(data);
     console.log(events);
