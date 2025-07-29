@@ -88,6 +88,20 @@ h3 {
     animation: blinkborder 2s ease-in-out infinite;
     border-radius: 15px;
 }
+.above500 {display: none !important;}
+.above1000 {display: none !important;}
+.above1500 {display: none !important;}
+.above2000 {display: none !important;}
+.above3000 {display: none !important;}
+.above4000 {display: none !important;}
+.above5000 {display: none !important;}
+.above6000 {display: none !important;}
+.above7000 {display: none !important;}
+.above8000 {display: none !important;}
+.above9000 {display: none !important;}
+.above10000 {display: none !important;}
+.above11000 {display: none !important;}
+.above12000 {display: none !important;}
 @keyframes blinkborder {
     0% {
         border: 5px solid transparent;
