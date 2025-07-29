@@ -103,13 +103,13 @@ function InsertRow(start, length, code, type, text, owner, location, index) {
     row.appendChild(ownertext);
     row.appendChild(roomcode);
     row.appendChild(remarks);
-    if (index > 500) row.classList.add("500");
-    if (index > 1000) row.classList.add("1000");
-    if (index > 1500) row.classList.add("1500");
-    if (index > 2000) row.classList.add("2000");
-    if (index > 3000) row.classList.add("3000");
-    if (index > 4000) row.classList.add("4000");
-    if (index > 5000) row.classList.add("5000");
+    if (index > 500) row.classList.add("above500");
+    if (index > 1000) row.classList.add("above1000");
+    if (index > 1500) row.classList.add("above1500");
+    if (index > 2000) row.classList.add("above2000");
+    if (index > 3000) row.classList.add("above3000");
+    if (index > 4000) row.classList.add("above4000");
+    if (index > 5000) row.classList.add("above5000");
     document.getElementById("maindiv").appendChild(row);
 }
 function UpdateRemark(index, start, length) {
