@@ -40,6 +40,10 @@ async function getFile() {
                 if (obj.type == "COURSE") {
                     obj.owner = data[i].events[j].details.course.instructors;
                 }
+                obj.owner.filter(o => {
+                    return String(o) != "undefined";
+                });
+                if (obj.owner.length == 0) obj.owner = [""];
                 events.push(obj);
             }
         }
