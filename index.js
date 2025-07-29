@@ -67,6 +67,20 @@ async function getFile() {
         if (query.event && query.event == event.code && scroll == 0) {
             if (window.innerWidth <= 800) scroll = 310.8 * (index - 1);
             else scroll = 70.8 * (index - 1);
+            if (index - 1 > 500) max += 1
+            if (index - 1 > 1000) max += 1
+            if (index - 1 > 1500) max += 1
+            if (index - 1 > 2000) max += 1
+            if (index - 1 > 3000) max += 1
+            if (index - 1 > 4000) max += 1
+            if (index - 1 > 5000) max += 1
+            if (index - 1 > 6000) max += 1
+            if (index - 1 > 7000) max += 1
+            if (index - 1 > 8000) max += 1
+            if (index - 1 > 9000) max += 1
+            if (index - 1 > 10000) max += 1
+            if (index - 1 > 11000) max += 1
+            if (index - 1 > 12000) max += 1
         }
         InsertRow(event.time, event.length, event.code, event.type, event.text, event.owner[0], event.location, index);
     });
