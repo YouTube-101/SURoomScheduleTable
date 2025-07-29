@@ -71,7 +71,7 @@ async function getFile() {
     console.log(data);
     console.log(events);
 }
-function InsertRow(start, length, code, type, text, owner, location, index) {
+function InsertRow(start, length, code, type, text, owner, location) {
     const row = document.createElement("div");
     const dtime = document.createElement("div");
     const stime = document.createElement("h3");
@@ -103,20 +103,6 @@ function InsertRow(start, length, code, type, text, owner, location, index) {
     row.appendChild(ownertext);
     row.appendChild(roomcode);
     row.appendChild(remarks);
-    if (index > 500 && index <= 1000) console.log(row,index);
-    if (index > 500) row.classList.add("above500");
-    if (index > 1000) row.classList.add("above1000");
-    if (index > 1500) row.classList.add("above1500");
-    if (index > 2000) row.classList.add("above2000");
-    if (index > 3000) row.classList.add("above3000");
-    if (index > 4000) row.classList.add("above4000");
-    if (index > 5000) row.classList.add("above5000");
-    if (index > 5000) row.classList.add("above6000");
-    if (index > 5000) row.classList.add("above7000");
-    if (index > 5000) row.classList.add("above8000");
-    if (index > 5000) row.classList.add("above9000");
-    if (index > 5000) row.classList.add("above10000");
-    if (index > 5000) row.classList.add("above15000");
     document.getElementById("maindiv").appendChild(row);
 }
 function UpdateRemark(index, start, length) {
@@ -181,6 +167,34 @@ function UpdateRemark(index, start, length) {
     document.getElementById("maindiv").children[index].children[5].children[0].innerText = text;
     document.getElementById("maindiv").children[index].children[5].children[0].style.color = color;
     document.getElementById("maindiv").children[index].children[5].classList.toggle("blink", blinking);
+    document.getElementById("maindiv").children[index].classList.remove("above500");
+    document.getElementById("maindiv").children[index].classList.remove("above1000");
+    document.getElementById("maindiv").children[index].classList.remove("above1500");
+    document.getElementById("maindiv").children[index].classList.remove("above2000");
+    document.getElementById("maindiv").children[index].classList.remove("above3000");
+    document.getElementById("maindiv").children[index].classList.remove("above4000");
+    document.getElementById("maindiv").children[index].classList.remove("above5000");
+    document.getElementById("maindiv").children[index].classList.remove("above6000");
+    document.getElementById("maindiv").children[index].classList.remove("above7000");
+    document.getElementById("maindiv").children[index].classList.remove("above8000");
+    document.getElementById("maindiv").children[index].classList.remove("above9000");
+    document.getElementById("maindiv").children[index].classList.remove("above10000");
+    document.getElementById("maindiv").children[index].classList.remove("above11000");
+    document.getElementById("maindiv").children[index].classList.remove("above12000");
+    if (index > 500) document.getElementById("maindiv").children[index].classList.add("above500");
+    if (index > 1000) document.getElementById("maindiv").children[index].classList.add("above1000");
+    if (index > 1500) document.getElementById("maindiv").children[index].classList.add("above1500");
+    if (index > 2000) document.getElementById("maindiv").children[index].classList.add("above2000");
+    if (index > 3000) document.getElementById("maindiv").children[index].classList.add("above3000");
+    if (index > 4000) document.getElementById("maindiv").children[index].classList.add("above4000");
+    if (index > 5000) document.getElementById("maindiv").children[index].classList.add("above5000");
+    if (index > 6000) document.getElementById("maindiv").children[index].classList.add("above6000");
+    if (index > 7000) document.getElementById("maindiv").children[index].classList.add("above7000");
+    if (index > 8000) document.getElementById("maindiv").children[index].classList.add("above8000");
+    if (index > 9000) document.getElementById("maindiv").children[index].classList.add("above9000");
+    if (index > 10000) document.getElementById("maindiv").children[index].classList.add("above10000");
+    if (index > 11000) document.getElementById("maindiv").children[index].classList.add("above11000");
+    if (index > 12000) document.getElementById("maindiv").children[index].classList.add("above12000");
     return false;
 }
 function getOrdinal(n) {
