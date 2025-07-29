@@ -181,20 +181,20 @@ function UpdateRemark(index, start, length) {
     document.getElementById("maindiv").children[index].classList.remove("above10000");
     document.getElementById("maindiv").children[index].classList.remove("above11000");
     document.getElementById("maindiv").children[index].classList.remove("above12000");
-    if (index > 500) document.getElementById("maindiv").children[index].classList.add("above500");
-    if (index > 1000) document.getElementById("maindiv").children[index].classList.add("above1000");
-    if (index > 1500) document.getElementById("maindiv").children[index].classList.add("above1500");
-    if (index > 2000) document.getElementById("maindiv").children[index].classList.add("above2000");
-    if (index > 3000) document.getElementById("maindiv").children[index].classList.add("above3000");
-    if (index > 4000) document.getElementById("maindiv").children[index].classList.add("above4000");
-    if (index > 5000) document.getElementById("maindiv").children[index].classList.add("above5000");
-    if (index > 6000) document.getElementById("maindiv").children[index].classList.add("above6000");
-    if (index > 7000) document.getElementById("maindiv").children[index].classList.add("above7000");
-    if (index > 8000) document.getElementById("maindiv").children[index].classList.add("above8000");
-    if (index > 9000) document.getElementById("maindiv").children[index].classList.add("above9000");
-    if (index > 10000) document.getElementById("maindiv").children[index].classList.add("above10000");
-    if (index > 11000) document.getElementById("maindiv").children[index].classList.add("above11000");
-    if (index > 12000) document.getElementById("maindiv").children[index].classList.add("above12000");
+    if (index > 500 && max < 1) document.getElementById("maindiv").children[index].classList.add("above500");
+    if (index > 1000 && max < 2) document.getElementById("maindiv").children[index].classList.add("above1000");
+    if (index > 1500 && max < 3) document.getElementById("maindiv").children[index].classList.add("above1500");
+    if (index > 2000 && max < 4) document.getElementById("maindiv").children[index].classList.add("above2000");
+    if (index > 3000 && max < 5) document.getElementById("maindiv").children[index].classList.add("above3000");
+    if (index > 4000 && max < 6) document.getElementById("maindiv").children[index].classList.add("above4000");
+    if (index > 5000 && max < 7) document.getElementById("maindiv").children[index].classList.add("above5000");
+    if (index > 6000 && max < 8) document.getElementById("maindiv").children[index].classList.add("above6000");
+    if (index > 7000 && max < 9) document.getElementById("maindiv").children[index].classList.add("above7000");
+    if (index > 8000 && max < 10) document.getElementById("maindiv").children[index].classList.add("above8000");
+    if (index > 9000 && max < 11) document.getElementById("maindiv").children[index].classList.add("above9000");
+    if (index > 10000 && max < 12) document.getElementById("maindiv").children[index].classList.add("above10000");
+    if (index > 11000 && max < 13) document.getElementById("maindiv").children[index].classList.add("above11000");
+    if (index > 12000 && max < 14) document.getElementById("maindiv").children[index].classList.add("above12000");
     return false;
 }
 function getOrdinal(n) {
@@ -309,5 +309,18 @@ async function loop() {
         }
     }
 }
+let max = 0;
+let overloading = false;
+window.addEventListener("scroll", (e) => {
+    if (window.scrollY > window.innerHeight - 50 && overloading == false) {
+        overloading = true;
+        max++;
+        console.log("INCREASING MAX TO " + max);
+    }
+    else if (overloading == true) {
+        overloading = false;
+    }
+});
+
 getFile();
 loop();
