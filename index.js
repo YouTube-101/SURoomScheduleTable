@@ -312,7 +312,7 @@ async function loop() {
 let max = 0;
 let overloading = false;
 window.addEventListener("scroll", (e) => {
-    if (window.scrollY > window.innerHeight - 50 && overloading == false) {
+    if (window.scrollY > document.body.scrollHeight - 50 && overloading == false) {
         overloading = true;
         max++;
         console.log("INCREASING MAX TO " + max);
