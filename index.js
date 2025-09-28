@@ -13,7 +13,7 @@ async function getFile() {
     if (mode == "EXAM") {
         document.getElementById("header").children[0].innerText = (language == "en") ? "EXAMS LIST" : "SINAV LİSTESİ";
         document.getElementById("header").style.backgroundColor = "red";
-        document.getElementById("maindiv").children[0].style.backgroundColor = "#950000";
+        document.getElementById("maindiv").children[0].style.backgroundColor = "#950000 !important";
     }
     if (!beta) {
         ts = await fetch("https://ytube101.com/roomschedulets");
