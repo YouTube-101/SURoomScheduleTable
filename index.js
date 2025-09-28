@@ -3,7 +3,13 @@ let events = [];
 let language = "en";
 let nowts = 0;
 let beta = false;
+let mode = "GENERAL";
 async function getFile() {
+    switch (window.location.search) {
+        case "GENERAL": mode = "?mode=GENERAL"; break;
+        case "EXAM": mode = "?mode=EXAM"; break;
+        default: mode = "?mode=GENERAL"; break;
+    }
     if (!beta) {
         ts = await fetch("https://ytube101.com/roomschedulets");
         ts = parseInt(await ts.text());
@@ -44,7 +50,7 @@ async function getFile() {
                     return String(o) != "undefined";
                 });
                 if (obj.owner.length == 0) obj.owner = [""];
-                events.push(obj);
+                if ((mode == "EXAM" && obj.type == "EXAM") || mode != "EXAM") events.push(obj);
             }
         }
     }
@@ -367,6 +373,11 @@ window.addEventListener("scroll", (e) => {
     else if (overloading == true) {
         overloading = false;
     }
+});
+
+window.addEventListener("keypress", (e) => {
+    if (e.key == "G" && mode != "GENERAL") window.location.href = "/";
+    else if (e.key == "E" && mode != "EXAM") window.location.href = "/?mode=EXAM";
 });
 
 getFile();
