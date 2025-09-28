@@ -10,6 +10,11 @@ async function getFile() {
         case "EXAM": mode = "?mode=EXAM"; break;
         default: mode = "?mode=GENERAL"; break;
     }
+    if (mode == "EXAM") {
+        document.getElementById("header").children[0].innerText = (language == "en") ? "EXAMS LIST" : "SINAV LİSTESİ";
+        document.getElementById("header").style.backgroundColor = "red";
+        document.getElementById("maindiv").children[0].style.backgroundColor = "#950000";
+    }
     if (!beta) {
         ts = await fetch("https://ytube101.com/roomschedulets");
         ts = parseInt(await ts.text());
@@ -295,7 +300,7 @@ function ToggleLanguage() {
     document.getElementById("maindiv").children[0].children[3].innerText = (language == "en") ? "Event Owner" : "Etkinlik Sahibi";
     document.getElementById("maindiv").children[0].children[4].innerText = (language == "en") ? "Location" : "Konum";
     document.getElementById("maindiv").children[0].children[5].innerText = (language == "en") ? "Remarks" : "Açıklamalar";
-    document.getElementById("header").children[0].innerText = (language == "en") ? "CAMPUS EVENTS" : "KAMPÜS ETKİNLİKLERİ";
+    document.getElementById("header").children[0].innerText = (mode=="EXAM")?((language == "en") ? "EXAMS LIST" : "SINAV LİSTESİ"):((language == "en") ? "CAMPUS EVENTS" : "KAMPÜS ETKİNLİKLERİ");
     UpdateLocations(true);
     UpdateRemarks();
 }
