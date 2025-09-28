@@ -380,9 +380,9 @@ window.addEventListener("scroll", (e) => {
     }
 });
 
-window.addEventListener("keypress", (e) => {
-    if (e.key == "G" && mode != "GENERAL") window.location.href = "/";
-    else if (e.key == "E" && mode != "EXAM") window.location.href = "/?mode=EXAM";
+window.addEventListener("keydown", (e) => {
+    if (e.key.toUpperCase() == "G" && mode != "GENERAL") window.location.href = "/";
+    else if (e.key.toUpperCase() == "E" && mode != "EXAM") window.location.href = "/?mode=EXAM";
 });
 
 getFile();
