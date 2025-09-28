@@ -6,9 +6,9 @@ let beta = false;
 let mode = "GENERAL";
 async function getFile() {
     switch (window.location.search) {
-        case "GENERAL": mode = "?mode=GENERAL"; break;
-        case "EXAM": mode = "?mode=EXAM"; break;
-        default: mode = "?mode=GENERAL"; break;
+        case "?mode=GENERAL": mode = "GENERAL"; break;
+        case "?mode=EXAM": mode = "EXAM"; break;
+        default: mode = "GENERAL"; break;
     }
     if (mode == "EXAM") {
         document.getElementById("header").children[0].innerText = (language == "en") ? "EXAMS LIST" : "SINAV LİSTESİ";
