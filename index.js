@@ -59,7 +59,7 @@ async function getFile() {
                     owner: [data[i].room.name + " (" + data[i].room.capacity + ")"],
                     location: [data[i].room.building + " " + data[i].room.code],
                 };
-                if (data[i].room.name.includes("Lab")) obj.owner[0] += " 🔒";
+                if ((data[i].room.name.includes("Lab") && data[i].room.building != "SL") || data[i].room.name.includes("Studio")) obj.owner[0] += " 🔒";
                 events.push(obj);
             }
             else {
@@ -79,7 +79,20 @@ async function getFile() {
                         owner: [data[i].room.name + " (" + data[i].room.capacity + ")"],
                         location: [data[i].room.building + " " + data[i].room.code],
                     }
-                    if (data[i].room.name.includes("Lab")) obj.owner[0] += " 🔒";
+                    if ((data[i].room.name.includes("Lab") && data[i].room.building != "SL") || data[i].room.name.includes("Studio")) obj.owner[0] += " 🔒";
+                    if (obj.length >= 30) events.push(obj);
+                }
+                if (prevTS < currentTS + 172800) {
+                    let obj = {
+                        time: prevTS,
+                        length: (currentTS + 172800) - prevTS,
+                        code: "N/A",
+                        type: "FREE",
+                        text: "No more Scheduled Events for " + Math.ceil(((currentTS + 172800) - prevTS) / 1440) + " days",
+                        owner: [data[i].room.name + " (" + data[i].room.capacity + ")"],
+                        location: [data[i].room.building + " " + data[i].room.code],
+                    };
+                    if ((data[i].room.name.includes("Lab") && data[i].room.building != "SL") || data[i].room.name.includes("Studio")) obj.owner[0] += " 🔒";
                     if (obj.length >= 30) events.push(obj);
                 }
             }
