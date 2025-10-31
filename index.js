@@ -50,15 +50,17 @@ async function getFile() {
         for (let i = 0; i < data.length; i++) {
             let prevTS = currentTS;
             if (!data[i].events.length) {
-                events.push({
+                let obj = {
                     time: prevTS,
                     length: currentTS + 172800,
                     code: "N/A",
                     type: "FREE",
                     text: "No Scheduled Events for 120 days",
-                    owner: [data[i].room.type],
+                    owner: [data[i].room.name + " (" + data[i].room.capacity + ")"],
                     location: [data[i].room.building + " " + data[i].room.code],
-                });
+                };
+                if (data[i].room.name.includes("Lab")) obj.owner[0] += " 🔒";
+                events.push(obj);
             }
             else {
                 prevTS = 0;
