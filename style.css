@@ -31,7 +31,7 @@ h3 {
 }
 #maindiv > div {
     display: grid;
-    grid-template-columns: 180px 100px auto max-content 175px 270px;
+    grid-template-columns: 180px 100px auto max-content 225px 270px;
     gap: 10px;
     border-bottom: 1px solid white;
     padding: 15px;
@@ -47,7 +47,7 @@ h3 {
     gap: 10px;
 }
 #maindiv > div > div:nth-child(1) > h3{
-    width: 75px;
+    width: 90px;
 }
 #maindiv > div > div:nth-child(1).showdate > h3:nth-child(1) {
     width: 190px;

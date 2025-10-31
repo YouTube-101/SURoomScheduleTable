@@ -184,6 +184,15 @@ async function ParseSchedule(schedule, start, finish, building) {
                 cursor.setTime(cursor.getTime() + 24 * 60 * 60 * 1000);
             }
         });
+        for (let i = 0; i < newevents.length; i++) {
+            for (let j = i + 1; j < newevents.length; j++) {
+                if ((newevents[i].text == newevents[j].text) && (newevents[i].time == newevents[j].time) && (newevents[i].length == newevents[j].length) && (newevents[i].code == newevents[j].code) && (newevents[i].location == newevents[j].location)) {
+                    newevents[j].type = "DUPE";
+                    newevents.splice(j, 1);
+                    j--;
+                }
+            }
+        }
         rooms[i].events = newevents;
     }
     let roomsobj = {};
