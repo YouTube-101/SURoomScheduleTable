@@ -364,7 +364,7 @@ function UpdateLocation(index, justlang = false, showingdate = false) {
     const diff = (eventtime.getTime() - rightnow.getTime()) / (1000 * 60 * 60 * 24);
     const showday = (diff < 6 && diff != 0);
     const eventday = (language == "tr") ? (["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"][eventtime.getDay()]) : (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][eventtime.getDay()]);
-    if (!showingdate && !debug) {
+    if (!showingdate && !debugdate) {
         if (mode != "FREE") document.getElementById("maindiv").children[index].children[0].children[0].innerText = time;
         else document.getElementById("maindiv").children[index].children[0].children[0].innerText = start;
         document.getElementById("maindiv").children[index].children[0].classList.remove("showdate");
