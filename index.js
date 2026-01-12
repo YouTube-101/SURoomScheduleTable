@@ -351,6 +351,7 @@ function getOrdinal(n) {
         default: return "th";
     }
 }
+const debugdate = true;
 function UpdateLocation(index, justlang = false, showingdate = false) {
     const rightnow = new Date();
     const eventtime = new Date((events[index - 1].time + (mode=="FREE"?events[index-1].length:0)) * 60000);
@@ -363,14 +364,14 @@ function UpdateLocation(index, justlang = false, showingdate = false) {
     const diff = (eventtime.getTime() - rightnow.getTime()) / (1000 * 60 * 60 * 24);
     const showday = (diff < 6 && diff != 0);
     const eventday = (language == "tr") ? (["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"][eventtime.getDay()]) : (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][eventtime.getDay()]);
-    if (!showingdate) {
+    if (!showingdate && !debug) {
         if (mode != "FREE") document.getElementById("maindiv").children[index].children[0].children[0].innerText = time;
         else document.getElementById("maindiv").children[index].children[0].children[0].innerText = start;
         document.getElementById("maindiv").children[index].children[0].classList.remove("showdate");
     }
-    else if (diff != 0) {
-        if (diff == 1) document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr") ? "Yarın" : "Tomorrow";
-        else if (showday) document.getElementById("maindiv").children[index].children[0].children[0].innerText = eventday;
+    else if (diff != 0 || debugdate) {
+        if (diff == 1 && !debugdate) document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr") ? "Yarın" : "Tomorrow";
+        else if (showday && !debugdate) document.getElementById("maindiv").children[index].children[0].children[0].innerText = eventday;
         else document.getElementById("maindiv").children[index].children[0].children[0].innerText = (language == "tr") ? (eventtime.getDate().toString() + " " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][eventtime.getMonth()]) : (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][eventtime.getMonth()] + " " + eventtime.getDate().toString() + getOrdinal(parseInt(eventtime.getDate())));
         document.getElementById("maindiv").children[index].children[0].classList.add("showdate");
     }
